@@ -1,4 +1,4 @@
-const CACHE='mikacorpus-video-r19-private-loader';
+const CACHE='mikacorpus-video-r20-webkit-decoder-r2';
 const SHELL=['./','./index.html','./app.js','./private-gate.js','./wake-guard.js','./v08.js','./v09.js','./v09-safe.js','./v10.js','./v11.js','./v12.js','./video-private-loader.js','./mkc5.js','./build.json','./manifest.webmanifest','./icon-192.png','./icon-512.png','./pre-tf-r4.js','./vendor/tfjs-4.22.0-r4.min.js','./post-tf-core-r4.js','./vendor/tfjs-backend-webgpu-4.22.0-r4.js','./post-tf-webgpu-r4.js','./corpus-v12/manifest.json'];
 const FRESH=new Set(['/','/index.html','/app.js','/private-gate.js','/wake-guard.js','/v08.js','/v09.js','/v09-safe.js','/v10.js','/v11.js','/v12.js','/video-private-loader.js','/mkc5.js','/build.json','/manifest.webmanifest','/sw.js','/corpus-v12/manifest.json']);
 function scopedPath(url){const scope=new URL(self.registration.scope).pathname.replace(/\/$/,'');if(url.pathname.startsWith(scope)){const p=url.pathname.slice(scope.length);return p||'/';}return url.pathname;}
