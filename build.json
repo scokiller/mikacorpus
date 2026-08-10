@@ -7,12 +7,12 @@
   "corpus_manifest_sha256": "computed at runtime and recorded in each v0.12 run",
   "checkpoint_scheme": "IndexedDB model+Adam + Supabase immutable A/B cloud",
   "claim_handoff": "single-use owner claim entered directly inside installed PWA; capability stored only in IndexedDB",
-  "generated_utc": "2026-08-10T08:15:00Z",
+  "generated_utc": "2026-08-10T09:45:00Z",
   "hosting": "GitHub Pages static PWA + Supabase Pro Edge API/Storage",
-  "revision": "r18.1-reference-generalization",
+  "revision": "r20-video-webkit-decoder-r2",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
-  "runtime_revision": "r19-private-mikavideo-loader",
+  "runtime_revision": "r20-private-mikavideo-webkit-decoder-r2",
   "legacy_engine": "0.7-web.2",
   "previous_engine": "0.11-web.1-lr-duel-confirm",
   "v08_sha256": "29d4eb064157c4a59a7f3cd7784547deeeeaa19c9d8091f7e49b1b4c4b75a97a",
@@ -28,27 +28,9 @@
     "conclusion": "configuration selected, but HEVC-only corpus is too small and already compressed to assess general-purpose lossless compression"
   },
   "v12_reference_corpus": {
-    "train": {
-      "bytes": 12734123,
-      "files": 12,
-      "sources": "Large Corpus + non-held-out Calgary files"
-    },
-    "validation": {
-      "bytes": 1053765,
-      "files": 4,
-      "files_list": [
-        "book2",
-        "geo",
-        "obj2",
-        "trans"
-      ]
-    },
-    "benchmark": {
-      "name": "Canterbury Corpus",
-      "bytes": 2810784,
-      "files": 11,
-      "policy": "sealed; never fetched by v0.12"
-    },
+    "train": {"bytes": 12734123,"files": 12,"sources": "Large Corpus + non-held-out Calgary files"},
+    "validation": {"bytes": 1053765,"files": 4,"files_list": ["book2","geo","obj2","trans"]},
+    "benchmark": {"name": "Canterbury Corpus","bytes": 2810784,"files": 11,"policy": "sealed; never fetched by v0.12"},
     "leakage_gate": "no SHA-256-identical payload across train, validation and benchmark",
     "excluded_duplicate": "Calgary pic excluded because it is byte-identical to Canterbury ptt5"
   },
@@ -58,19 +40,17 @@
     "seeds": 3,
     "token_budget_per_seed": 1500000,
     "final_validation_target_bytes": 131072,
-    "baselines": [
-      "raw 8 bpb",
-      "validation zero-order entropy",
-      "train-unigram cross-entropy on validation",
-      "gzip on validation when supported"
-    ],
     "checkpoint": "model + Adam every 64 steps locally; Supabase every 128 steps and at completion",
     "benchmark": "Canterbury hard-sealed by runtime override"
   },
   "private_video": {
     "public_loader": "video-private-loader.js",
-    "algorithm_location": "Supabase private authenticated module",
+    "algorithm_location": "Supabase private authenticated Edge module",
     "module": "mikavideo-v01",
-    "raw_video_upload": false
+    "module_revision": 2,
+    "module_sha256": "00cce22b950f24ebc80dd405005a6fbf7ced55004680118b314d7cb41bdba95e",
+    "decoder": "webkit-robust-r2",
+    "raw_video_upload": false,
+    "fix": "removed mandatory loadeddata dependency; bounded media/seek waits"
   }
 }
