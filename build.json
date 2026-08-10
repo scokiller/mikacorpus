@@ -7,10 +7,10 @@
   "corpus_manifest_sha256": "computed at runtime and recorded in each v0.12 run",
   "checkpoint_scheme": "IndexedDB model+Adam + Supabase immutable A/B cloud",
   "claim_handoff": "single-use owner claim entered directly inside installed PWA; capability stored only in IndexedDB",
-  "generated_utc": "2026-08-10T10:25:00Z",
-  "hosting": "GitHub Pages static PWA + Supabase Pro Edge API/Storage",
-  "revision": "r24-video-self-sync-microlearner-v05",
-  "runtime_revision": "r24-private-mikavideo-self-sync-microlearner-v05",
+  "generated_utc": "2026-08-10T11:36:00Z",
+  "hosting": "GitHub Pages static PWA + Supabase Pro private authenticated video research",
+  "revision": "r25-video-autolab-private",
+  "runtime_revision": "r25-private-mikavideo-autolab-v1",
   "legacy_engine": "0.7-web.2",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
@@ -20,24 +20,11 @@
     "seeds": [7.60927260524072,7.40834694031963,7.5305727127071],
     "benchmark": "Canterbury remained sealed"
   },
-  "mikavideo_v01_result": {"real_clip_savings_vs_local_proxy_pct":0.7125974355149779,"atoms":48,"cross_long_atoms":46,"sidecar_bits":26880},
-  "mikavideo_v02_result": {"same_video":true,"film_dna_savings_pct":1.3032903623675656,"residual_grammar_savings_pct":0.0,"hybrid_savings_pct":1.3032903623675656,"conclusion":"Residual Grammar rejected"},
-  "mikavideo_v03_result": {"same_video":true,"tiers":[{"frames":120,"savings_pct":0.5266682008045604},{"frames":240,"savings_pct":0.4015245895381815},{"frames":360,"savings_pct":0.2764748664737639}],"conclusion":"Film DNA weakens at realistic temporal density"},
-  "mikavideo_v04_result": {
-    "same_video": true,
-    "frames": 360,
-    "motion_baseline_bits": 37898732,
-    "film_dna_savings_pct": 0.00454368763577631,
-    "film_dna_atoms": 7,
-    "conclusion": "Film DNA rejected as primary architecture after strong multi-reference motion baseline"
-  },
   "private_video": {
     "public_loader": "video-private-loader.js",
-    "algorithm_location": "Supabase private authenticated module",
-    "module": "mikavideo-v05",
-    "module_revision": 1,
-    "module_sha256": "0c74cac516f6527b8b564c228716d2124c7a1b3e742074af68531d8695c55f36",
-    "experiment": "Self-Sync Microlearner: decoder-synchronous causal fixed-point online adaptation over v0.4 motion baseline; 36 weights; zero transmitted model bits",
-    "raw_video_upload": false
+    "algorithm_location": "private authenticated Supabase runtime",
+    "research_details_public": false,
+    "raw_video_upload": false,
+    "autolab": true
   }
 }
