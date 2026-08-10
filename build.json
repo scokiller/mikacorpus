@@ -4,10 +4,10 @@
   "tfjs": "4.22.0",
   "app_sha256": "7b7e0a9e818a6dc0444183f4b3b486543c07c9b1bb876d1f729230c49c84ca0d",
   "corpus_version": "reference-lossless-v12.1",
-  "generated_utc": "2026-08-10T11:50:00Z",
+  "generated_utc": "2026-08-10T21:55:00Z",
   "hosting": "GitHub Pages static PWA + Supabase Pro private authenticated video research",
-  "revision": "r26-video-autolab-v06",
-  "runtime_revision": "r26-private-mikavideo-autolab-v06",
+  "revision": "r27-webcodecs-reality-lab-v07",
+  "runtime_revision": "r27-private-mikavideo-reality-v07",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
   "v12_generalization_result": {
@@ -21,23 +21,33 @@
   },
   "mikavideo_v05_result": {
     "self_sync_microlearner_savings_pct": -0.6011678702073726,
-    "weight_count": 36,
-    "model_bits_transmitted": 0,
     "conclusion": "Self-Sync Microlearner rejected in this formulation"
+  },
+  "mikavideo_v06_result": {
+    "same_video_full_frames": 573,
+    "winner_family": "texture",
+    "winner_robust_gain_pct": 0.008385152787144277,
+    "webgpu": true,
+    "shader_f16": true,
+    "webnn": false,
+    "conclusion": "No current handcrafted family survives fine validation with meaningful gain"
+  },
+  "local_neural_screen": {
+    "aspect_preserved_geometry": "96x168",
+    "high_quality_best_robust_gain_pct": -8.39,
+    "conclusion": "small per-title latent transforms only show promise at low perceptual quality; not competitive in high-fidelity region"
   },
   "private_video": {
     "public_loader": "video-private-loader.js",
-    "algorithm_location": "Supabase private authenticated module",
-    "module": "mikavideo-v06",
+    "algorithm_location": "Supabase private authenticated Edge module",
+    "module": "mikavideo-autolab-v07",
     "module_revision": 1,
-    "module_sha256": "f5edf1d618d36608c4e98a56cf71a7a53fe81b5c3d4ef8dab234ceeaba094c8b",
-    "autolab": true,
-    "coarse_sweep_configs": 46,
-    "coarse_geometry": "80x40",
-    "fine_geometry": "160x88",
-    "full_video_up_to_frames": 600,
-    "closed_loop_reconstruction": true,
-    "hardware_probe": ["WebGPU", "WebNN"],
+    "module_sha256": "6e3cfb1fa680719c022c53762241e555029f0f38a06922e5c4c6a22093908ff5",
+    "experiment": "WebCodecs Reality Lab: real encoded chunk bytes + decode roundtrip + aspect-preserving 100% vs 75% base-layer comparison",
+    "test_geometry": "160x284",
+    "frames": 180,
+    "codec_probe": ["H264","HEVC","AV1","VP9"],
+    "hardware_acceleration": "prefer-hardware",
     "raw_video_upload": false
   }
 }
