@@ -5,15 +5,15 @@
       "files": 11
     },
     "train": {
-      "bytes": 13247339,
-      "files": 13
+      "bytes": 12734123,
+      "files": 12
     },
     "validation": {
       "bytes": 1053765,
       "files": 4
     }
   },
-  "created_by": "Mika Corpus R18",
+  "created_by": "Mika Corpus R18.1",
   "files": [
     {
       "category": "large-reference",
@@ -120,15 +120,6 @@
       "path": "train/paper2",
       "sha256": "dc4b9cf68094c632a920f4e76d0a0a8b9617b624c36928ca46a5d29798c5bbbe",
       "size": 82199,
-      "source_corpus": "calgary",
-      "split": "train"
-    },
-    {
-      "category": "calgary-reference",
-      "name": "pic",
-      "path": "train/pic",
-      "sha256": "0ec3a75089bb52342813496b17e51377bc9eba3cb519a444d67025354841d650",
-      "size": 513216,
       "source_corpus": "calgary",
       "split": "train"
     },
@@ -270,8 +261,9 @@
   ],
   "policy": {
     "benchmark": "Full Canterbury Corpus; sealed from gradients and model selection",
-    "train": "Large Corpus + Calgary excluding four held-out files",
+    "leakage_gate": "No SHA-256-identical payload may occur across train/validation/benchmark",
+    "train": "Large Corpus + Calgary excluding four held-out validation files and Calgary pic (duplicate of Canterbury ptt5)",
     "validation": "Calgary held-out: book2, geo, obj2, trans"
   },
-  "version": "reference-lossless-v12"
+  "version": "reference-lossless-v12.1"
 }
