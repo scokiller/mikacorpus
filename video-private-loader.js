@@ -1,6 +1,6 @@
 'use strict';
 (()=>{
-  const ENDPOINT='https://xifxrkjvsrzexmuqtsvw.supabase.co/functions/v1/mikavideo-private/module?name=mikavideo-v05';
+  const ENDPOINT='https://xifxrkjvsrzexmuqtsvw.supabase.co/functions/v1/mikavideo-autolab-v1';
   async function boot(){
     try{
       const cap=await dbGet('capability');if(!cap)return;
@@ -10,8 +10,8 @@
       const actual=await sha256Bytes(bytes);if(!expected||actual!==expected)throw new Error('SHA-256 module vidéo refusé');
       const src=new TextDecoder().decode(bytes);
       (new Function(src))();
-      try{log(`Mika Video privé chargé · v0.5 · r${r.headers.get('x-mikavideo-revision')||'?'} · SHA ✓`);}catch{}
-    }catch(e){try{log(`Mika Video privé non chargé: ${e instanceof Error?e.message:String(e)}`);}catch{}}
+      try{log(`Mika Video AutoLab privé chargé · r${r.headers.get('x-mikavideo-revision')||'?'} · SHA ✓`);}catch{}
+    }catch(e){try{log(`Mika Video AutoLab non chargé: ${e instanceof Error?e.message:String(e)}`);}catch{}}
   }
   setTimeout(boot,1500);
 })();
