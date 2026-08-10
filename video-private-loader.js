@@ -1,6 +1,6 @@
 'use strict';
 (()=>{
-  const ENDPOINT='https://xifxrkjvsrzexmuqtsvw.supabase.co/functions/v1/mikavideo-autolab-v07';
+  const ENDPOINT='https://xifxrkjvsrzexmuqtsvw.supabase.co/functions/v1/mikavideo-private/module?name=mikavideo-v07';
   function describeError(e){
     try{
       if(e instanceof Error)return e.message||e.name||e.stack||'Error sans message';
