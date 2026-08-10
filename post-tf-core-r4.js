@@ -1,0 +1,1 @@
+globalThis.__mikaTfBoot.afterCore={keys:Object.keys(globalThis.tf||{}).length,setBackend:typeof globalThis.tf?.setBackend,ready:typeof globalThis.tf?.ready,tensor2d:typeof globalThis.tf?.tensor2d,version:globalThis.tf?.version?.tfjs||null};

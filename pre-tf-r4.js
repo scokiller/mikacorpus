@@ -1,0 +1,1 @@
+globalThis.__mikaTfBoot={errors:[],beforeType:typeof globalThis.tf};addEventListener('error',e=>{try{globalThis.__mikaTfBoot.errors.push(String(e.message||e.error||'error').slice(0,500))}catch{}});addEventListener('unhandledrejection',e=>{try{globalThis.__mikaTfBoot.errors.push('promise:'+String(e.reason).slice(0,500))}catch{}});try{delete globalThis.tf}catch{};globalThis.tf={};

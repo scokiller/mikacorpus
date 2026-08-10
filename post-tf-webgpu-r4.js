@@ -1,0 +1,1 @@
+globalThis.__mikaTfBoot.afterWebgpu={keys:Object.keys(globalThis.tf||{}).length,setBackend:typeof globalThis.tf?.setBackend,ready:typeof globalThis.tf?.ready,tensor2d:typeof globalThis.tf?.tensor2d,webgpu:typeof globalThis.tf?.webgpu,errors:[...(globalThis.__mikaTfBoot?.errors||[])]};
