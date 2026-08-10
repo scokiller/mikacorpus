@@ -10,8 +10,13 @@ function mikaWakeNote(message) {
   try { log(`WakeLock · ${message}`); } catch {}
 }
 
-function mikaWakeSetUi(message) {
-  try { ui.gpu.dataset.wake = message; } catch {}
+function mikaWakeSetUi(state) {
+  try {
+    ui.gpu.dataset.wake = state;
+    const base = String(ui.gpu.textContent || 'GPU').replace(/ · (Écran éveillé ✓|WakeLock ✗|WakeLock relâché)$/,'');
+    const suffix = state === 'active' ? 'Écran éveillé ✓' : state === 'released' ? 'WakeLock relâché' : 'WakeLock ✗';
+    ui.gpu.textContent = `${base} · ${suffix}`;
+  } catch {}
 }
 
 function mikaWakeScheduleRetry(delay = 1000) {
@@ -42,6 +47,7 @@ requestWakeLock = async function robustRequestWakeLock() {
   if (!running) return false;
   if (document.visibilityState !== 'visible') return false;
   if (wakeLock && !wakeLock.released) {
+    mikaWakeSetUi('active');
     mikaWakeStartHeartbeat();
     return true;
   }
