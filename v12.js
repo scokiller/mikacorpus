@@ -8,8 +8,9 @@ const V12_CORPUS_BASE='./corpus-v12';
 const V12_PROFILE={key:'h192-e48-s128-b8',embed:48,hidden:192,seq:128,batch:8};
 const V12_LR=3e-4; // v09CreateModel uses this exact Adam LR.
 const V12_SEEDS=[0x19851201,0x19851202,0x19851203];
+const V12_VALIDATION_SEED=0x198512ff; // identical held-out windows for every model seed.
 const V12_TOKEN_BUDGET=1500000;
-const V12_VALID_FINAL_BATCHES=128;       // 131,072 held-out target bytes per validation.
+const V12_VALID_FINAL_BATCHES=128;       // 131,072 fixed held-out target bytes per validation.
 const V12_VALID_TREND_BATCHES=32;
 const V12_CHECKPOINT_EVERY=64;
 const V12_CLOUD_EVERY=128;
@@ -63,9 +64,10 @@ function v12CrossEntropy(trainCounts,trainN,valCounts,valN){const alpha=.5,den=t
 async function v12GzipBpb(bytes){
   if(typeof CompressionStream!=='function')return null;
   try{
-    const cs=new CompressionStream('gzip');
-    const writer=cs.writable.getWriter();await writer.write(bytes);await writer.close();
-    const out=await new Response(cs.readable).arrayBuffer();return out.byteLength*8/bytes.length;
+    const source=new Blob([bytes]).stream();
+    const compressed=source.pipeThrough(new CompressionStream('gzip'));
+    const out=await new Response(compressed).arrayBuffer();
+    return out.byteLength*8/bytes.length;
   }catch(e){v12Log(`baseline gzip indisponible: ${e.message}`);return null;}
 }
 async function v12Baselines(corpus){
@@ -104,7 +106,7 @@ async function v12RunSeed(state,seedIndex,corpus){
   const seed=V12_SEEDS[seedIndex]>>>0,total=v12Steps(),tps=V12_PROFILE.batch*V12_PROFILE.seq;
   let cur=state.current;
   if(!cur||cur.seedIndex!==seedIndex){
-    const rr=await api('/run/create',{method:'POST',body:JSON.stringify({experimentKey:`v12-reference-h192-e48-s128-b8-s${seedIndex+1}`,engineVersion:V12_ENGINE,config:{profile:V12_PROFILE,seed,learningRate:V12_LR,tokenBudget:V12_TOKEN_BUDGET,totalSteps:total,validationTargetBytes:V12_VALID_FINAL_BATCHES*tps,corpusVersion:V12_CORPUS_VERSION,manifestSha256:corpus.manifestSha256,benchmarkSealed:true},progress:{stage:'training',seedIndex,tokensSeen:0}})});
+    const rr=await api('/run/create',{method:'POST',body:JSON.stringify({experimentKey:`v12-reference-h192-e48-s128-b8-s${seedIndex+1}`,engineVersion:V12_ENGINE,config:{profile:V12_PROFILE,seed,learningRate:V12_LR,tokenBudget:V12_TOKEN_BUDGET,totalSteps:total,validationTargetBytes:V12_VALID_FINAL_BATCHES*tps,validationSamplingSeed:V12_VALIDATION_SEED,corpusVersion:V12_CORPUS_VERSION,manifestSha256:corpus.manifestSha256,benchmarkSealed:true},progress:{stage:'training',seedIndex,tokensSeen:0}})});
     cur={seedIndex,runId:rr.run.id,step:0,tokensSeen:0,sequence:0,initialValidationBpb:null,snapshot:null};state.current=cur;await v12SaveState(state);
   }
   const ctx=v09CreateModel(V12_PROFILE,seed);let resumed=false;
@@ -113,8 +115,8 @@ async function v12RunSeed(state,seedIndex,corpus){
     if(!snap){const cloud=await v12RestoreCloud(cur);if(cloud){snap=cloud.snapshot;cur.step=cloud.step||0;cur.tokensSeen=cloud.tokensSeen||0;cur.sequence=cloud.sequence||0;cur.initialValidationBpb=cloud.initialValidationBpb??cur.initialValidationBpb;}}
     if(snap){await v08RestoreSnapshot(ctx.model,ctx.opt,snap,true);resumed=true;v12Log(`seed ${seedIndex+1}: reprise étape ${cur.step}/${total}.`);}
     if(cur.initialValidationBpb==null){
-      v12Status('v0.12 · Validation initiale',`Seed ${seedIndex+1}/3 · échantillon fixe de ${V12_VALID_FINAL_BATCHES*tps} octets cibles…`);
-      cur.initialValidationBpb=await v09Validate(ctx,V12_PROFILE,corpus.validation,seed,V12_VALID_FINAL_BATCHES);await v12SaveState(state);v12Log(`seed ${seedIndex+1}: initial ${cur.initialValidationBpb.toFixed(5)} bpb.`);
+      v12Status('v0.12 · Validation initiale',`Seed ${seedIndex+1}/3 · mêmes ${V12_VALID_FINAL_BATCHES*tps} octets cibles pour toutes les seeds…`);
+      cur.initialValidationBpb=await v09Validate(ctx,V12_PROFILE,corpus.validation,V12_VALIDATION_SEED,V12_VALID_FINAL_BATCHES);await v12SaveState(state);v12Log(`seed ${seedIndex+1}: initial ${cur.initialValidationBpb.toFixed(5)} bpb.`);
     }
     const times=[];const marks=new Set([Math.floor(total*.25),Math.floor(total*.5),Math.floor(total*.75)]);
     for(let i=cur.step;i<total;i++){
@@ -125,18 +127,18 @@ async function v12RunSeed(state,seedIndex,corpus){
       pct(15+80*((seedIndex+(i+1)/total)/V12_SEEDS.length));
       if((i+1)%V12_CHECKPOINT_EVERY===0||i===total-1)await v12Checkpoint(state,ctx,((i+1)%V12_CLOUD_EVERY===0)||i===total-1);
       if(marks.has(i+1)){
-        const vb=await v09Validate(ctx,V12_PROFILE,corpus.validation,seed,V12_VALID_TREND_BATCHES);ui.val.textContent=fmt(vb);
-        await api('/metric',{method:'POST',body:JSON.stringify({runId:cur.runId,name:'v12_validation_trend_bpb',value:vb,globalStep:i+1,payload:{tokensSeen:cur.tokensSeen,seedIndex,validationBatches:V12_VALID_TREND_BATCHES}})}).catch(()=>{});
+        const vb=await v09Validate(ctx,V12_PROFILE,corpus.validation,V12_VALIDATION_SEED,V12_VALID_TREND_BATCHES);ui.val.textContent=fmt(vb);
+        await api('/metric',{method:'POST',body:JSON.stringify({runId:cur.runId,name:'v12_validation_trend_bpb',value:vb,globalStep:i+1,payload:{tokensSeen:cur.tokensSeen,seedIndex,validationBatches:V12_VALID_TREND_BATCHES,validationSamplingSeed:V12_VALIDATION_SEED}})}).catch(()=>{});
       }
     }
-    v12Status('v0.12 · Validation finale',`Seed ${seedIndex+1}/3 · mesure large et fixe…`);
-    const finalValidationBpb=await v09Validate(ctx,V12_PROFILE,corpus.validation,seed,V12_VALID_FINAL_BATCHES);
+    v12Status('v0.12 · Validation finale',`Seed ${seedIndex+1}/3 · mesure large sur exactement le même échantillon…`);
+    const finalValidationBpb=await v09Validate(ctx,V12_PROFILE,corpus.validation,V12_VALIDATION_SEED,V12_VALID_FINAL_BATCHES);
     const medianStepMs=times.length?[...times].sort((a,b)=>a-b)[Math.floor(times.length/2)]:null;
     const tokensPerSec=medianStepMs? tps/(medianStepMs/1000):null;
-    const result={seedIndex,seed,runId:cur.runId,initialValidationBpb:cur.initialValidationBpb,finalValidationBpb,improvementBpb:cur.initialValidationBpb-finalValidationBpb,tokensSeen:cur.tokensSeen,totalSteps:total,medianStepMs,tokensPerSec,resumed};
+    const result={seedIndex,seed,runId:cur.runId,initialValidationBpb:cur.initialValidationBpb,finalValidationBpb,improvementBpb:cur.initialValidationBpb-finalValidationBpb,tokensSeen:cur.tokensSeen,totalSteps:total,medianStepMs,tokensPerSec,resumed,validationSamplingSeed:V12_VALIDATION_SEED};
     state.results=state.results.filter(x=>x.seedIndex!==seedIndex);state.results.push(result);state.current=null;await v12SaveState(state);
     await api('/metric',{method:'POST',body:JSON.stringify({runId:cur.runId,name:'v12_final_validation_bpb',value:finalValidationBpb,globalStep:total,payload:result})});
-    await api('/run/update',{method:'POST',body:JSON.stringify({runId:cur.runId,status:'completed',step:total,global_step:total,current_validation_bpb:finalValidationBpb,best_validation_bpb:finalValidationBpb,progress:{stage:'completed',tokensSeen:cur.tokensSeen,benchmarkLoaded:false},completed_at:new Date().toISOString()})});
+    await api('/run/update',{method:'POST',body:JSON.stringify({runId:cur.runId,status:'completed',step:total,global_step:total,current_validation_bpb:finalValidationBpb,best_validation_bpb:finalValidationBpb,progress:{stage:'completed',tokensSeen:cur.tokensSeen,benchmarkLoaded:false,validationSamplingSeed:V12_VALIDATION_SEED},completed_at:new Date().toISOString()})});
     v12Log(`seed ${seedIndex+1}: ${cur.initialValidationBpb.toFixed(5)} → ${finalValidationBpb.toFixed(5)} bpb${tokensPerSec?` · ${Math.round(tokensPerSec)} tok/s`:''}.`);
     return {paused:false};
   }finally{v09Dispose(ctx);await tf.nextFrame();}
@@ -157,10 +159,10 @@ async function v12Run(){
     state=await v12LoadState();const rs=state.results.sort((a,b)=>a.seedIndex-b.seedIndex);if(rs.length!==V12_SEEDS.length)throw new Error(`Résultats incomplets: ${rs.length}/3.`);
     const finals=rs.map(x=>x.finalValidationBpb),imps=rs.map(x=>x.improvementBpb),speeds=rs.map(x=>x.tokensPerSec).filter(Number.isFinite);
     const summary={meanFinalValidationBpb:v12Mean(finals),sdFinalValidationBpb:v12Sd(finals),meanImprovementBpb:v12Mean(imps),sdImprovementBpb:v12Sd(imps),meanTokensPerSec:v12Mean(speeds),allSeedsBelowRaw:finals.every(x=>x<8),beatsTrainUnigramMean:v12Mean(finals)<state.baselines.trainUnigramCrossEntropyBpb};
-    const report={engine:V12_ENGINE,createdAt:new Date().toISOString(),corpusVersion:V12_CORPUS_VERSION,manifestSha256:corpus.manifestSha256,profile:V12_PROFILE,learningRate:V12_LR,tokenBudgetPerSeed:V12_TOKEN_BUDGET,results:rs,baselines:state.baselines,summary,benchmark:{name:'Canterbury Corpus',files:corpus.manifest.counts.benchmark.files,bytes:corpus.manifest.counts.benchmark.bytes,loaded:false,sealed:true},note:'v0.12 measures generalization only. Canterbury benchmark bytes are never fetched by this runtime.'};
+    const report={engine:V12_ENGINE,createdAt:new Date().toISOString(),corpusVersion:V12_CORPUS_VERSION,manifestSha256:corpus.manifestSha256,profile:V12_PROFILE,learningRate:V12_LR,tokenBudgetPerSeed:V12_TOKEN_BUDGET,validationSamplingSeed:V12_VALIDATION_SEED,results:rs,baselines:state.baselines,summary,benchmark:{name:'Canterbury Corpus',files:corpus.manifest.counts.benchmark.files,bytes:corpus.manifest.counts.benchmark.bytes,loaded:false,sealed:true},note:'v0.12 measures generalization only. All model seeds are evaluated on identical held-out validation windows. Canterbury benchmark bytes are never fetched by this runtime.'};
     await dbPut(V12_DONE_KEY,report);await dbPut(V12_STATE_KEY,null);
     const last=rs[rs.length-1].runId,payload=JSON.stringify(report),hash=await sha256Text(payload);
-    await api('/artifact',{method:'POST',body:JSON.stringify({runId:last,kind:'reference-generalization-v12',payload,sha256:hash,promote:false,metadata:{meanFinalValidationBpb:summary.meanFinalValidationBpb,sd:summary.sdFinalValidationBpb,corpusVersion:V12_CORPUS_VERSION,benchmarkLoaded:false}})}).catch(()=>{});
+    await api('/artifact',{method:'POST',body:JSON.stringify({runId:last,kind:'reference-generalization-v12',payload,sha256:hash,promote:false,metadata:{meanFinalValidationBpb:summary.meanFinalValidationBpb,sd:summary.sdFinalValidationBpb,corpusVersion:V12_CORPUS_VERSION,benchmarkLoaded:false,validationSamplingSeed:V12_VALIDATION_SEED}})}).catch(()=>{});
     pct(100);ui.sync.textContent='Supabase ✓';ui.experiment.textContent='v0.12 référence';ui.val.textContent=fmt(summary.meanFinalValidationBpb);ui.best.textContent=`±${summary.sdFinalValidationBpb.toFixed(4)}`;ui.train.textContent=Number.isFinite(summary.meanTokensPerSec)?`${Math.round(summary.meanTokensPerSec)} tok/s`:'—';
     v12Status('v0.12 Généralisation terminée',`Validation ${summary.meanFinalValidationBpb.toFixed(4)} ± ${summary.sdFinalValidationBpb.toFixed(4)} bpb · amélioration moyenne ${summary.meanImprovementBpb.toFixed(4)} bpb · Canterbury toujours scellé.`);
   }catch(e){const msg=e instanceof Error?e.message:String(e);v12Status(v12Stop?'v0.12 en pause':'Arrêt sécurisé v0.12',msg);v12Log(`ERREUR: ${e?.stack||e}`);}
@@ -171,5 +173,5 @@ async function v12Run(){
   corpusCache=null;
   const s=ui.start.cloneNode(true),p=ui.pause.cloneNode(true);ui.start.replaceWith(s);ui.pause.replaceWith(p);ui.start=s;ui.pause=p;
   ui.start.textContent='Lancer / reprendre v0.12';ui.pause.textContent='Pause sûre';ui.start.addEventListener('click',v12Run);ui.pause.addEventListener('click',()=>{v12Stop=true;ui.pause.disabled=true;v12Status('Pause demandée v0.12','Fin du mini-batch puis checkpoint exact modèle + Adam.');});
-  setTimeout(async()=>{try{const d=await dbGet(V12_DONE_KEY),st=await dbGet(V12_STATE_KEY);if(d?.summary){v12Status('v0.12 déjà terminé',`Corpus généraliste · ${d.summary.meanFinalValidationBpb.toFixed(4)} ± ${d.summary.sdFinalValidationBpb.toFixed(4)} bpb · Canterbury scellé.`);ui.experiment.textContent='v0.12 terminé';}else if(st?.current){v12Status('v0.12 reprise prête',`Seed ${st.current.seedIndex+1}/3 · étape ${st.current.step}/${v12Steps()} · corpus généraliste.`);ui.experiment.textContent='v0.12 reprise';}else{v12Status('v0.12 Généralisation prête','12,73 MiB train · 1,05 MiB validation · 3 seeds × 1,5 M tokens · Canterbury (11 fichiers) reste scellé.');ui.experiment.textContent='Référence généraliste';}}catch{}},1050);
+  setTimeout(async()=>{try{const d=await dbGet(V12_DONE_KEY),st=await dbGet(V12_STATE_KEY);if(d?.summary){v12Status('v0.12 déjà terminé',`Corpus généraliste · ${d.summary.meanFinalValidationBpb.toFixed(4)} ± ${d.summary.sdFinalValidationBpb.toFixed(4)} bpb · Canterbury scellé.`);ui.experiment.textContent='v0.12 terminé';}else if(st?.current){v12Status('v0.12 reprise prête',`Seed ${st.current.seedIndex+1}/3 · étape ${st.current.step}/${v12Steps()} · corpus généraliste.`);ui.experiment.textContent='v0.12 reprise';}else{v12Status('v0.12 Généralisation prête','12,73 MiB train · 1,05 MiB validation · 3 seeds × 1,5 M tokens · validation fixe · Canterbury (11 fichiers) reste scellé.');ui.experiment.textContent='Référence généraliste';}}catch{}},1050);
 })();
