@@ -7,50 +7,37 @@
   "corpus_manifest_sha256": "computed at runtime and recorded in each v0.12 run",
   "checkpoint_scheme": "IndexedDB model+Adam + Supabase immutable A/B cloud",
   "claim_handoff": "single-use owner claim entered directly inside installed PWA; capability stored only in IndexedDB",
-  "generated_utc": "2026-08-10T09:45:00Z",
+  "generated_utc": "2026-08-10T09:55:00Z",
   "hosting": "GitHub Pages static PWA + Supabase Pro Edge API/Storage",
-  "revision": "r20-video-webkit-decoder-r2",
+  "revision": "r21-video-residual-grammar-v02",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
-  "runtime_revision": "r20-private-mikavideo-webkit-decoder-r2",
+  "runtime_revision": "r21-private-mikavideo-residual-grammar-v02",
   "legacy_engine": "0.7-web.2",
   "previous_engine": "0.11-web.1-lr-duel-confirm",
   "v08_sha256": "29d4eb064157c4a59a7f3cd7784547deeeeaa19c9d8091f7e49b1b4c4b75a97a",
   "mkc5_sha256": "35a14c94b58d9e00a0bc0a3020b33b915029eb02adaeb32442e09400e5f69021",
-  "v11_result": {
-    "profile": "h192-e48-s128-b8",
-    "learning_rate": 0.0003,
-    "confirmation_seeds": 4,
-    "mean_final_validation_bpb_on_hevc_v2": 7.972423732552977,
-    "sample_sd": 0.026930973881194056,
-    "best_seed_bpb": 7.94650907500241,
-    "worst_seed_bpb": 8.00605660601113,
-    "conclusion": "configuration selected, but HEVC-only corpus is too small and already compressed to assess general-purpose lossless compression"
+  "v12_generalization_result": {
+    "mean_final_validation_bpb": 7.516064086089153,
+    "sample_sd": 0.10124552281829409,
+    "seeds": [7.60927260524072, 7.40834694031963, 7.5305727127071],
+    "benchmark": "Canterbury remained sealed"
   },
-  "v12_reference_corpus": {
-    "train": {"bytes": 12734123,"files": 12,"sources": "Large Corpus + non-held-out Calgary files"},
-    "validation": {"bytes": 1053765,"files": 4,"files_list": ["book2","geo","obj2","trans"]},
-    "benchmark": {"name": "Canterbury Corpus","bytes": 2810784,"files": 11,"policy": "sealed; never fetched by v0.12"},
-    "leakage_gate": "no SHA-256-identical payload across train, validation and benchmark",
-    "excluded_duplicate": "Calgary pic excluded because it is byte-identical to Canterbury ptt5"
-  },
-  "v12_generalization": {
-    "profile": "h192-e48-s128-b8",
-    "learning_rate": 0.0003,
-    "seeds": 3,
-    "token_budget_per_seed": 1500000,
-    "final_validation_target_bytes": 131072,
-    "checkpoint": "model + Adam every 64 steps locally; Supabase every 128 steps and at completion",
-    "benchmark": "Canterbury hard-sealed by runtime override"
+  "mikavideo_v01_result": {
+    "real_clip_savings_vs_local_proxy_pct": 0.7125974355149779,
+    "atoms": 48,
+    "cross_long_atoms": 46,
+    "sidecar_bits": 26880,
+    "conclusion": "global recurrence signal exists, but raw atom sidecar cost leaves only a small real-clip gain"
   },
   "private_video": {
     "public_loader": "video-private-loader.js",
     "algorithm_location": "Supabase private authenticated Edge module",
-    "module": "mikavideo-v01",
-    "module_revision": 2,
-    "module_sha256": "00cce22b950f24ebc80dd405005a6fbf7ced55004680118b314d7cb41bdba95e",
+    "module": "mikavideo-v02",
+    "module_revision": 1,
+    "module_sha256": "7ad5fb78c604679d52dc6fcb21a439e2f75862405e4353d1a62bcfd81cc2fac5",
+    "experiment": "Residual Grammar + Film DNA + joint Bit Market ablation",
     "decoder": "webkit-robust-r2",
-    "raw_video_upload": false,
-    "fix": "removed mandatory loadeddata dependency; bounded media/seek waits"
+    "raw_video_upload": false
   }
 }
