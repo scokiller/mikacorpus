@@ -1,35 +1,46 @@
 {
-  "engine": "0.10-web.1-equal-token-tournament",
+  "engine": "0.11-web.1-lr-duel-confirm",
   "protocol": "MC-WEB-1",
   "tfjs": "4.22.0",
   "app_sha256": "7b7e0a9e818a6dc0444183f4b3b486543c07c9b1bb876d1f729230c49c84ca0d",
   "corpus_version": "chromium-hevc-v2",
   "corpus_manifest_sha256": "86eaaf020710a4a67fa6f1f0025ef3284731691d739115d62f2d9d3b9ce4e118",
-  "checkpoint_scheme": "indexeddb A/B model+Adam + Supabase immutable A/B cloud",
+  "checkpoint_scheme": "indexeddb model+Adam + Supabase immutable A/B cloud",
   "claim_handoff": "single-use owner claim entered directly inside installed PWA; capability stored only in IndexedDB",
-  "generated_utc": "2026-08-10T06:42:00Z",
+  "generated_utc": "2026-08-10T07:09:00Z",
   "hosting": "GitHub Pages static PWA + Supabase Pro Edge API/Storage",
-  "revision": "r16-equal-token-tournament",
+  "revision": "r17-lr-duel-confirm",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
-  "runtime_revision": "r16-private-wake-v10-tournament",
+  "runtime_revision": "r17-private-wake-v11-lr-duel",
   "legacy_engine": "0.7-web.2",
-  "previous_engine": "0.9-web.2-hw-autotune-safe",
+  "previous_engine": "0.10-web.1-equal-token-tournament",
   "v08_sha256": "29d4eb064157c4a59a7f3cd7784547deeeeaa19c9d8091f7e49b1b4c4b75a97a",
   "mkc5_sha256": "35a14c94b58d9e00a0bc0a3020b33b915029eb02adaeb32442e09400e5f69021",
-  "v10_tournament": {
-    "profiles": ["h192-e48-s128-b8","h256-e64-s160-b12","h256-e64-s192-b16"],
-    "seeds_per_profile": 2,
-    "token_budget_per_seed": 1000000,
-    "validation_batches": 12,
-    "selection": "lowest median held-out validation bpb across two seeds under equal training-token budget",
-    "checkpoint": "model + Adam every 64 steps locally; Supabase every 128 steps and at completion",
-    "benchmark": "sealed; not used for profile selection"
+  "v10_correction": {
+    "issue": "even-N median implementation selected upper middle instead of averaging the two central values",
+    "corrected_mean_final_bpb": {
+      "h192-e48-s128-b8": 7.996237643521083,
+      "h256-e64-s160-b12": 7.998056446045283,
+      "h256-e64-s192-b16": 8.001737820678325
+    },
+    "conclusion": "h192 and h256-s160 remain too close and seed variance is too high to freeze a winner"
+  },
+  "v11_duel": {
+    "profiles": ["h192-e48-s128-b8","h256-e64-s160-b12"],
+    "learning_rates": [0.00015,0.0002,0.0003],
+    "screening_seeds_per_configuration": 2,
+    "screening_token_budget": 500000,
+    "selection": "mean held-out final bpb + 0.25 * sample standard deviation",
+    "confirmation_seeds": 4,
+    "confirmation_token_budget": 1200000,
+    "validation_batches": 16,
+    "checkpoint": "model + Adam every 64 steps locally; Supabase every 128 steps",
+    "benchmark": "sealed; not used for selection"
   },
   "v09_autotune_result": {
     "fastest_stable": "h256-e64-s192-b16",
     "fastest_tokens_per_second": 12962.025316455696,
-    "short_probe_recommended": "h192-e48-s128-b8",
     "known_process_crash_profiles": ["h320-e64-s192-b12","h320-e64-s192-b8","h384-e80-s192-b6","h448-e96-s192-b4"]
   }
 }
