@@ -19,6 +19,12 @@ function mikaWakeSetUi(state) {
   } catch {}
 }
 
+function mikaWakeFailSafe(reason) {
+  try { stopRequested = true; } catch {}
+  try { if (typeof v08Stop !== 'undefined') v08Stop = true; } catch {}
+  try { setStatus('Wake Lock indisponible', `${reason} · pause sûre demandée pour protéger le calcul.`); } catch {}
+}
+
 function mikaWakeScheduleRetry(delay = 1000) {
   if (mikaWakeRetryTimer) clearTimeout(mikaWakeRetryTimer);
   if (!running || document.visibilityState !== 'visible') return;
@@ -53,10 +59,11 @@ requestWakeLock = async function robustRequestWakeLock() {
   }
   if (mikaWakeAcquireInFlight) return false;
   if (!navigator.wakeLock || typeof navigator.wakeLock.request !== 'function') {
-    mikaWakeNote('API indisponible dans cette PWA/iOS — verrou écran non acquis.');
+    const reason = 'API Screen Wake Lock absente dans cette PWA/iOS';
+    mikaWakeNote(`${reason}.`);
     mikaWakeSetUi('unsupported');
-    mikaWakeStartHeartbeat();
-    return false;
+    mikaWakeFailSafe(reason);
+    throw new Error(reason);
   }
 
   mikaWakeAcquireInFlight = true;
@@ -79,9 +86,8 @@ requestWakeLock = async function robustRequestWakeLock() {
     const msg = e instanceof Error ? `${e.name || 'Error'}: ${e.message}` : String(e);
     mikaWakeNote(`échec acquisition: ${msg}`);
     mikaWakeSetUi('failed');
-    mikaWakeStartHeartbeat();
-    mikaWakeScheduleRetry(1500);
-    return false;
+    mikaWakeFailSafe(msg);
+    throw e;
   } finally {
     mikaWakeAcquireInFlight = false;
   }
