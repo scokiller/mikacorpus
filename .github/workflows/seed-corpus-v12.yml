@@ -42,7 +42,9 @@ jobs:
 
           src = pathlib.Path('/tmp/mika-corpus')
           dst = pathlib.Path('site/corpus-v12')
-          calgary = ['bib','book1','book2','geo','news','obj1','obj2','paper1','paper2','pic','progc','progl','progp','trans']
+          # Calgary 'pic' is byte-identical to Canterbury 'ptt5', so it is intentionally
+          # excluded from training to keep the Canterbury benchmark truly held out.
+          calgary = ['bib','book1','book2','geo','news','obj1','obj2','paper1','paper2','progc','progl','progp','trans']
           large = ['E.coli','bible.txt','world192.txt']
           canterbury = ['alice29.txt','asyoulik.txt','cp.html','fields.c','grammar.lsp','kennedy.xls','lcet10.txt','plrabn12.txt','ptt5','sum','xargs.1']
           validation = {'book2','geo','obj2','trans'}
@@ -68,17 +70,30 @@ jobs:
           for name in canterbury:
               add('canterbury',name,'benchmark','canterbury-benchmark')
 
+          # Hard leakage gate: identical bytes may never occur in two different splits.
+          by_hash={}
+          for f in files:
+              by_hash.setdefault(f['sha256'],[]).append(f)
+          leaks=[]
+          for sha, rows in by_hash.items():
+              splits={r['split'] for r in rows}
+              if len(splits)>1:
+                  leaks.append({'sha256':sha,'files':[(r['split'],r['name']) for r in rows]})
+          if leaks:
+              raise RuntimeError('cross-split byte-identical leakage: '+json.dumps(leaks,sort_keys=True))
+
           counts={}
           for split in ('train','validation','benchmark'):
               rows=[x for x in files if x['split']==split]
               counts[split]={'files':len(rows),'bytes':sum(x['size'] for x in rows)}
           manifest={
-              'version':'reference-lossless-v12',
-              'created_by':'Mika Corpus R18',
+              'version':'reference-lossless-v12.1',
+              'created_by':'Mika Corpus R18.1',
               'policy':{
-                  'train':'Large Corpus + Calgary excluding four held-out files',
+                  'train':'Large Corpus + Calgary excluding four held-out validation files and Calgary pic (duplicate of Canterbury ptt5)',
                   'validation':'Calgary held-out: book2, geo, obj2, trans',
-                  'benchmark':'Full Canterbury Corpus; sealed from gradients and model selection'
+                  'benchmark':'Full Canterbury Corpus; sealed from gradients and model selection',
+                  'leakage_gate':'No SHA-256-identical payload may occur across train/validation/benchmark'
               },
               'counts':counts,
               'files':files
@@ -94,6 +109,6 @@ jobs:
           set -euo pipefail
           git config user.name 'Mika Corpus Dataset Bot'
           git config user.email 'scokiller@users.noreply.github.com'
-          git add corpus-v12
-          git commit -m 'Add v0.12 diversified lossless reference corpus'
+          git add -A corpus-v12
+          git commit -m 'Rebuild v0.12 corpus with leakage gate'
           git push origin gh-pages
