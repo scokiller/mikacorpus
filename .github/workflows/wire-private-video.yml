@@ -1,0 +1,43 @@
+name: Wire private Mika Video loader
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/wire-private-video.yml']
+permissions:
+  contents: write
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+      - name: Wire loader and bump private runtime
+        shell: python
+        run: |
+          from pathlib import Path
+          import json
+          for name in ('index.html','404.html'):
+              p=Path(name); s=p.read_text()
+              needle='<script src="./v12.js" defer></script>'
+              repl=needle+'<script src="./video-private-loader.js" defer></script>'
+              if './video-private-loader.js' not in s:
+                  if needle not in s: raise SystemExit(f'{name}: v12 marker missing')
+                  s=s.replace(needle,repl)
+              p.write_text(s)
+          p=Path('sw.js'); s=p.read_text()
+          s=s.replace("const CACHE='mikacorpus-0.12-web.1-r18-2-fixed-validation';","const CACHE='mikacorpus-video-r19-private-loader';")
+          s=s.replace("'./v12.js','./mkc5.js'","'./v12.js','./video-private-loader.js','./mkc5.js'")
+          s=s.replace("'/v12.js','/mkc5.js'","'/v12.js','/video-private-loader.js','/mkc5.js'")
+          p.write_text(s)
+          p=Path('build.json'); b=json.loads(p.read_text())
+          b['runtime_revision']='r19-private-mikavideo-loader'
+          b['private_video']={'public_loader':'video-private-loader.js','algorithm_location':'Supabase private authenticated module','module':'mikavideo-v01','raw_video_upload':False}
+          p.write_text(json.dumps(b,indent=2,ensure_ascii=False)+'\n')
+      - name: Publish wiring
+        run: |
+          git config user.name 'Mika Corpus Private Runtime Bot'
+          git config user.email 'scokiller@users.noreply.github.com'
+          git add index.html 404.html sw.js build.json video-private-loader.js
+          git commit -m 'Enable private Mika Video runtime R19'
+          git push origin gh-pages
