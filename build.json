@@ -4,27 +4,40 @@
   "tfjs": "4.22.0",
   "app_sha256": "7b7e0a9e818a6dc0444183f4b3b486543c07c9b1bb876d1f729230c49c84ca0d",
   "corpus_version": "reference-lossless-v12.1",
-  "corpus_manifest_sha256": "computed at runtime and recorded in each v0.12 run",
-  "checkpoint_scheme": "IndexedDB model+Adam + Supabase immutable A/B cloud",
-  "claim_handoff": "single-use owner claim entered directly inside installed PWA; capability stored only in IndexedDB",
-  "generated_utc": "2026-08-10T11:36:00Z",
+  "generated_utc": "2026-08-10T11:50:00Z",
   "hosting": "GitHub Pages static PWA + Supabase Pro private authenticated video research",
-  "revision": "r25-video-autolab-private",
-  "runtime_revision": "r25-private-mikavideo-autolab-v1",
-  "legacy_engine": "0.7-web.2",
+  "revision": "r26-video-autolab-v06",
+  "runtime_revision": "r26-private-mikavideo-autolab-v06",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
   "v12_generalization_result": {
     "mean_final_validation_bpb": 7.516064086089153,
     "sample_sd": 0.10124552281829409,
-    "seeds": [7.60927260524072,7.40834694031963,7.5305727127071],
     "benchmark": "Canterbury remained sealed"
+  },
+  "mikavideo_v04_result": {
+    "film_dna_savings_over_motion_proxy_pct": 0.00454368763577631,
+    "conclusion": "Film DNA rejected as principal mechanism after strong motion baseline"
+  },
+  "mikavideo_v05_result": {
+    "self_sync_microlearner_savings_pct": -0.6011678702073726,
+    "weight_count": 36,
+    "model_bits_transmitted": 0,
+    "conclusion": "Self-Sync Microlearner rejected in this formulation"
   },
   "private_video": {
     "public_loader": "video-private-loader.js",
-    "algorithm_location": "private authenticated Supabase runtime",
-    "research_details_public": false,
-    "raw_video_upload": false,
-    "autolab": true
+    "algorithm_location": "Supabase private authenticated module",
+    "module": "mikavideo-v06",
+    "module_revision": 1,
+    "module_sha256": "f5edf1d618d36608c4e98a56cf71a7a53fe81b5c3d4ef8dab234ceeaba094c8b",
+    "autolab": true,
+    "coarse_sweep_configs": 46,
+    "coarse_geometry": "80x40",
+    "fine_geometry": "160x88",
+    "full_video_up_to_frames": 600,
+    "closed_loop_reconstruction": true,
+    "hardware_probe": ["WebGPU", "WebNN"],
+    "raw_video_upload": false
   }
 }
