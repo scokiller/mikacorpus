@@ -7,10 +7,10 @@
   "corpus_manifest_sha256": "computed at runtime and recorded in each v0.12 run",
   "checkpoint_scheme": "IndexedDB model+Adam + Supabase immutable A/B cloud",
   "claim_handoff": "single-use owner claim entered directly inside installed PWA; capability stored only in IndexedDB",
-  "generated_utc": "2026-08-10T10:02:00Z",
+  "generated_utc": "2026-08-10T10:15:00Z",
   "hosting": "GitHub Pages static PWA + Supabase Pro Edge API/Storage",
-  "revision": "r22-video-scale-gate-v03",
-  "runtime_revision": "r22-private-mikavideo-scale-gate-v03",
+  "revision": "r23-video-motion-reality-gate-v04",
+  "runtime_revision": "r23-private-mikavideo-motion-reality-gate-v04",
   "legacy_engine": "0.7-web.2",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
@@ -36,13 +36,23 @@
     "cross_long_atoms": 62,
     "conclusion": "Residual Grammar rejected for this formulation; Film DNA retained"
   },
+  "mikavideo_v03_result": {
+    "same_video": true,
+    "tiers": [
+      {"frames":120,"savings_pct":0.5266682008045604,"atoms":64},
+      {"frames":240,"savings_pct":0.4015245895381815,"atoms":128},
+      {"frames":360,"savings_pct":0.2764748664737639,"atoms":192}
+    ],
+    "decode_ms": 24218,
+    "conclusion": "Film DNA raw-atom benefit declines toward realistic 30fps sampling; keep only as secondary component until it survives a stronger motion baseline"
+  },
   "private_video": {
     "public_loader": "video-private-loader.js",
     "algorithm_location": "Supabase private authenticated module",
-    "module": "mikavideo-v03",
+    "module": "mikavideo-v04",
     "module_revision": 1,
-    "module_sha256": "903511819853eaa535723f7d6b067dc74db338dc96315bf9d7089d3dede2b1e7",
-    "experiment": "Film DNA Scale Gate: 120/240/360 frames, 64/128/192 atom budgets",
+    "module_sha256": "7ac2d0bb0fa1ea6ca3c9e9676824c57ebcf150d9be11c5d14f54010fe28b5a48",
+    "experiment": "Motion Reality Gate: 360 frames, multi-reference motion search, then Film DNA ablation",
     "raw_video_upload": false
   }
 }
