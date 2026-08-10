@@ -7,16 +7,13 @@
   "corpus_manifest_sha256": "computed at runtime and recorded in each v0.12 run",
   "checkpoint_scheme": "IndexedDB model+Adam + Supabase immutable A/B cloud",
   "claim_handoff": "single-use owner claim entered directly inside installed PWA; capability stored only in IndexedDB",
-  "generated_utc": "2026-08-10T09:55:00Z",
+  "generated_utc": "2026-08-10T10:02:00Z",
   "hosting": "GitHub Pages static PWA + Supabase Pro Edge API/Storage",
-  "revision": "r21-video-residual-grammar-v02",
+  "revision": "r22-video-scale-gate-v03",
+  "runtime_revision": "r22-private-mikavideo-scale-gate-v03",
+  "legacy_engine": "0.7-web.2",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
-  "runtime_revision": "r21-private-mikavideo-residual-grammar-v02",
-  "legacy_engine": "0.7-web.2",
-  "previous_engine": "0.11-web.1-lr-duel-confirm",
-  "v08_sha256": "29d4eb064157c4a59a7f3cd7784547deeeeaa19c9d8091f7e49b1b4c4b75a97a",
-  "mkc5_sha256": "35a14c94b58d9e00a0bc0a3020b33b915029eb02adaeb32442e09400e5f69021",
   "v12_generalization_result": {
     "mean_final_validation_bpb": 7.516064086089153,
     "sample_sd": 0.10124552281829409,
@@ -27,17 +24,25 @@
     "real_clip_savings_vs_local_proxy_pct": 0.7125974355149779,
     "atoms": 48,
     "cross_long_atoms": 46,
-    "sidecar_bits": 26880,
-    "conclusion": "global recurrence signal exists, but raw atom sidecar cost leaves only a small real-clip gain"
+    "sidecar_bits": 26880
+  },
+  "mikavideo_v02_result": {
+    "same_video": true,
+    "film_dna_savings_pct": 1.3032903623675656,
+    "residual_grammar_savings_pct": 0.0,
+    "hybrid_savings_pct": 1.3032903623675656,
+    "film_dna_atoms": 64,
+    "residual_grammar_atoms": 0,
+    "cross_long_atoms": 62,
+    "conclusion": "Residual Grammar rejected for this formulation; Film DNA retained"
   },
   "private_video": {
     "public_loader": "video-private-loader.js",
-    "algorithm_location": "Supabase private authenticated Edge module",
-    "module": "mikavideo-v02",
+    "algorithm_location": "Supabase private authenticated module",
+    "module": "mikavideo-v03",
     "module_revision": 1,
-    "module_sha256": "7ad5fb78c604679d52dc6fcb21a439e2f75862405e4353d1a62bcfd81cc2fac5",
-    "experiment": "Residual Grammar + Film DNA + joint Bit Market ablation",
-    "decoder": "webkit-robust-r2",
+    "module_sha256": "903511819853eaa535723f7d6b067dc74db338dc96315bf9d7089d3dede2b1e7",
+    "experiment": "Film DNA Scale Gate: 120/240/360 frames, 64/128/192 atom budgets",
     "raw_video_upload": false
   }
 }
