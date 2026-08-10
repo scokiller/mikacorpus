@@ -1,6 +1,6 @@
-const CACHE='mikacorpus-0.9-web.1-r14-autotune';
-const SHELL=['./','./index.html','./app.js','./private-gate.js','./wake-guard.js','./v08.js','./v09.js','./mkc5.js','./build.json','./manifest.webmanifest','./icon-192.png','./icon-512.png','./pre-tf-r4.js','./vendor/tfjs-4.22.0-r4.min.js','./post-tf-core-r4.js','./vendor/tfjs-backend-webgpu-4.22.0-r4.js','./post-tf-webgpu-r4.js'];
-const FRESH=new Set(['/','/index.html','/app.js','/private-gate.js','/wake-guard.js','/v08.js','/v09.js','/mkc5.js','/build.json','/manifest.webmanifest','/sw.js']);
+const CACHE='mikacorpus-0.9-web.2-r15-safe-autotune';
+const SHELL=['./','./index.html','./app.js','./private-gate.js','./wake-guard.js','./v08.js','./v09.js','./v09-safe.js','./mkc5.js','./build.json','./manifest.webmanifest','./icon-192.png','./icon-512.png','./pre-tf-r4.js','./vendor/tfjs-4.22.0-r4.min.js','./post-tf-core-r4.js','./vendor/tfjs-backend-webgpu-4.22.0-r4.js','./post-tf-webgpu-r4.js'];
+const FRESH=new Set(['/','/index.html','/app.js','/private-gate.js','/wake-guard.js','/v08.js','/v09.js','/v09-safe.js','/mkc5.js','/build.json','/manifest.webmanifest','/sw.js']);
 function scopedPath(url){const scope=new URL(self.registration.scope).pathname.replace(/\/$/,'');if(url.pathname.startsWith(scope)){const p=url.pathname.slice(scope.length);return p||'/';}return url.pathname;}
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
