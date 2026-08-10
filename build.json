@@ -1,5 +1,5 @@
 {
-  "engine": "0.8-web.5-bytegru",
+  "engine": "0.9-web.1-hw-autotune",
   "protocol": "MC-WEB-1",
   "tfjs": "4.22.0",
   "app_sha256": "7b7e0a9e818a6dc0444183f4b3b486543c07c9b1bb876d1f729230c49c84ca0d",
@@ -7,33 +7,32 @@
   "corpus_manifest_sha256": "86eaaf020710a4a67fa6f1f0025ef3284731691d739115d62f2d9d3b9ce4e118",
   "checkpoint_scheme": "indexeddb-ab-local-5 + supabase-immutable-ab-cloud-10",
   "claim_handoff": "single-use owner claim entered directly inside installed PWA; capability stored only in IndexedDB",
-  "generated_utc": "2026-08-07T16:07:08.856Z",
+  "generated_utc": "2026-08-10T06:10:00Z",
   "hosting": "GitHub Pages static PWA + Supabase Pro Edge API/Storage",
-  "revision": "r3-vendored-tfjs",
+  "revision": "r14-hardware-autotune",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
-  "hotfix": "r4-physical-tfjs-reset-probe",
-  "runtime_revision": "r12-private-owner-gate",
+  "runtime_revision": "r14-private-wake-autotune",
   "legacy_engine": "0.7-web.2",
+  "previous_engine": "0.8-web.5-bytegru",
   "v08_sha256": "29d4eb064157c4a59a7f3cd7784547deeeeaa19c9d8091f7e49b1b4c4b75a97a",
   "mkc5_sha256": "35a14c94b58d9e00a0bc0a3020b33b915029eb02adaeb32442e09400e5f69021",
-  "bytegru": {
+  "hardware_autotune": {
+    "candidates": 8,
+    "probe_steps": 4,
+    "learning_probe_steps": 24,
+    "selection": "top stable WebGPU profiles by measured throughput, then short held-out learning probe",
+    "measures": ["tokens_per_second","median_step_ms","thermal_slowdown_ratio","validation_bpb_gain","tfjs_tensor_memory"],
+    "safety": "progressive profiles; finite-loss/gradient guard; WebGPU-only; R13 screen wake lock required"
+  },
+  "bytegru_v08": {
     "embedding": 48,
     "hidden": 192,
     "sequence": 128,
     "seeds": 2,
     "checkpoint": "model+Adam A/B",
     "reset_after": false,
-    "gru_semantics": "tfjs-reset-before",
-    "target_shape": "labels [batch,sequence] handled only by manual loss",
-    "training_api": "Optimizer.minimize Core API",
-    "checkpoint_memory_policy": "model LayerVariables read-only; Adam getWeights disposes only temporary iter tensor",
-    "predeploy_selftest": "TFJS 4.22.0: GRU gradient + repeated Adam checkpoint memoryDelta=0 + 13/13 restore",
-    "gradient_gate": "dense-output-bias-l1-256",
     "learning_rate": 0.0003,
-    "gradient_clip_global_norm": 1,
-    "gate_full_batches": 12,
-    "nan_inf_guard": "before optimizer update",
-    "checkpoint_policy": "R10 rejected; R11 clean restart"
+    "gradient_clip_global_norm": 1
   }
 }
