@@ -1,0 +1,99 @@
+name: Seed Mika Corpus v0.12 reference corpus
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/seed-corpus-v12.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: site
+
+      - name: Download official Canterbury corpora
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/mika-corpus/{calgary,large,canterbury}
+          curl --fail --location --retry 4 --retry-delay 2 https://corpus.canterbury.ac.nz/resources/calgary.zip -o /tmp/calgary.zip
+          curl --fail --location --retry 4 --retry-delay 2 https://corpus.canterbury.ac.nz/resources/large.zip -o /tmp/large.zip
+          curl --fail --location --retry 4 --retry-delay 2 https://corpus.canterbury.ac.nz/resources/cantrbry.zip -o /tmp/cantrbry.zip
+          unzip -q /tmp/calgary.zip -d /tmp/mika-corpus/calgary
+          unzip -q /tmp/large.zip -d /tmp/mika-corpus/large
+          unzip -q /tmp/cantrbry.zip -d /tmp/mika-corpus/canterbury
+
+      - name: Build immutable train validation benchmark split
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf site/corpus-v12
+          mkdir -p site/corpus-v12/{train,validation,benchmark}
+          python3 - <<'PY'
+          import hashlib, json, pathlib, shutil
+
+          src = pathlib.Path('/tmp/mika-corpus')
+          dst = pathlib.Path('site/corpus-v12')
+          calgary = ['bib','book1','book2','geo','news','obj1','obj2','paper1','paper2','pic','progc','progl','progp','trans']
+          large = ['E.coli','bible.txt','world192.txt']
+          canterbury = ['alice29.txt','asyoulik.txt','cp.html','fields.c','grammar.lsp','kennedy.xls','lcet10.txt','plrabn12.txt','ptt5','sum','xargs.1']
+          validation = {'book2','geo','obj2','trans'}
+
+          def locate(root, name):
+              hits = [p for p in root.rglob('*') if p.is_file() and p.name == name]
+              if len(hits) != 1:
+                  raise RuntimeError(f'{root}: expected one {name}, got {hits}')
+              return hits[0]
+
+          files=[]
+          def add(group, name, split, category):
+              p=locate(src/group,name)
+              q=dst/split/name
+              shutil.copyfile(p,q)
+              data=q.read_bytes()
+              files.append({'name':name,'split':split,'category':category,'size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'path':f'{split}/{name}','source_corpus':group})
+
+          for name in large:
+              add('large',name,'train','large-reference')
+          for name in calgary:
+              add('calgary',name,'validation' if name in validation else 'train','calgary-reference')
+          for name in canterbury:
+              add('canterbury',name,'benchmark','canterbury-benchmark')
+
+          counts={}
+          for split in ('train','validation','benchmark'):
+              rows=[x for x in files if x['split']==split]
+              counts[split]={'files':len(rows),'bytes':sum(x['size'] for x in rows)}
+          manifest={
+              'version':'reference-lossless-v12',
+              'created_by':'Mika Corpus R18',
+              'policy':{
+                  'train':'Large Corpus + Calgary excluding four held-out files',
+                  'validation':'Calgary held-out: book2, geo, obj2, trans',
+                  'benchmark':'Full Canterbury Corpus; sealed from gradients and model selection'
+              },
+              'counts':counts,
+              'files':files
+          }
+          (dst/'manifest.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(counts,indent=2))
+          PY
+
+      - name: Publish corpus to gh-pages
+        shell: bash
+        working-directory: site
+        run: |
+          set -euo pipefail
+          git config user.name 'Mika Corpus Dataset Bot'
+          git config user.email 'scokiller@users.noreply.github.com'
+          git add corpus-v12
+          git commit -m 'Add v0.12 diversified lossless reference corpus'
+          git push origin gh-pages
