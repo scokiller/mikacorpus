@@ -4,10 +4,10 @@
   "tfjs": "4.22.0",
   "app_sha256": "7b7e0a9e818a6dc0444183f4b3b486543c07c9b1bb876d1f729230c49c84ca0d",
   "corpus_version": "reference-lossless-v12.1",
-  "generated_utc": "2026-08-10T22:58:00Z",
+  "generated_utc": "2026-08-11T00:02:00Z",
   "hosting": "GitHub Pages static PWA + Supabase Pro private authenticated video research",
-  "revision": "r29-webcodecs-reality-lab-v07-r3",
-  "runtime_revision": "r29-private-mikavideo-reality-v07-r3",
+  "revision": "r30-neural-restore-lab-v08",
+  "runtime_revision": "r30-private-mikavideo-neural-restore-v08",
   "tfjs_core_sha256": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
   "tfjs_webgpu_sha256": "e4d8f36f76f24c2c614a81ae823ac8d6538057738bc1c327102e381ab469898b",
   "v12_generalization_result": {
@@ -24,30 +24,28 @@
     "conclusion": "Self-Sync Microlearner rejected in this formulation"
   },
   "mikavideo_v06_result": {
-    "same_video_full_frames": 573,
-    "winner_family": "texture",
     "winner_robust_gain_pct": 0.008385152787144277,
-    "webgpu": true,
-    "shader_f16": true,
-    "webnn": false,
-    "conclusion": "No current handcrafted family survives fine validation with meaningful gain"
+    "conclusion": "No handcrafted family survived fine validation with meaningful gain"
   },
-  "local_neural_screen": {
-    "aspect_preserved_geometry": "96x168",
-    "high_quality_best_robust_gain_pct": -8.39,
-    "conclusion": "small per-title latent transforms only show promise at low perceptual quality; not competitive in high-fidelity region"
+  "mikavideo_v07_result": {
+    "real_webcodecs_roundtrip": true,
+    "supported_codecs": ["HEVC", "H264", "AV1", "VP9"],
+    "strict_overlap_comparator": true,
+    "simple_downscale_conclusion": "No reduced-resolution baseline beats 100% without intelligent restoration",
+    "av1_target": "At roughly 20% lower bitrate, restoration needs about +0.58 dB PSNR and +0.0042 SSIM to reach the 100% AV1 reference on the studied sequence"
   },
   "private_video": {
     "public_loader": "video-private-loader.js",
     "algorithm_location": "Supabase private authenticated module table via mikavideo-private",
-    "module": "mikavideo-v07",
-    "module_revision": 3,
-    "module_sha256": "746e1f765fb09a3bf5ccbad51bd263a6ed819560c51985de94d45d258fa63a78",
-    "experiment": "WebCodecs Reality Lab: real encoded chunk bytes + decode roundtrip + aspect-preserving 100% vs 75% base-layer comparison",
-    "test_geometry": "160x284",
-    "frames": 180,
-    "codec_probe": ["H264","HEVC","AV1","VP9"],
-    "raw_video_upload": false,
-    "deployment_fix": "r3 removes external module.txt dependency entirely; source stored inline in private modules table with verified SHA"
+    "module": "mikavideo-v08",
+    "module_revision": 1,
+    "module_sha256": "82c06b68a45d60ebedac51f37d327af0e498040d88149910f42ccb489d728bb9",
+    "experiment": "Neural Restore Lab: real AV1 100/85/75/65 percent bases, WebGPU neural restoration, strict temporal train-gap-validation split, int8 weight quantization before final evaluation, model sidecar charged",
+    "test_geometry": "320x568",
+    "frames": 300,
+    "fps": 30,
+    "train_gap_validation": [170, 40, 90],
+    "architectures": ["Spatial-16", "Causal-3x16", "Causal-3 dilated", "Causal-5 deep"],
+    "raw_video_upload": false
   }
 }
