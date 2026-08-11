@@ -2,10 +2,10 @@
   "engine": "mika-video-neural-lab",
   "protocol": "MC-VIDEO-PRIVATE-1",
   "tfjs": "4.22.0",
-  "generated_utc": "2026-08-11T03:50:00Z",
+  "generated_utc": "2026-08-11T04:55:00Z",
   "hosting": "GitHub Pages minimal shell + Supabase Pro private authenticated neural module",
-  "revision": "r31-single-neural-shell-v40",
-  "runtime_revision": "r31-private-mikavideo-enhancement-superbattery-v40-r1",
+  "revision": "r31-single-neural-shell-v50",
+  "runtime_revision": "r31-private-mikavideo-latent-lift-v50-r1",
   "public_boot": {
     "shell": "video-shell.js",
     "loader": "video-private-loader.js",
@@ -23,38 +23,34 @@
     "best_main_parity_psnr_db": 0.7594211379680331,
     "best_main_parity_block_ssim": -0.015373899342501662,
     "best_main_net90min_saving_pct": -4.1450816498117105,
-    "parity_reached": false,
-    "conclusion": "v3.0 genuinely executed 768 screens, 112 locked 90-frame RD finals, and 30 lower-rate points. Spatial residual coefficient families remained rate-inefficient: even the best structural configuration recovered only about 0.00121 block-SSIM at roughly 56.9 kbps sidecar. v4.0 therefore tests temporally compressed enhancement streams instead of more sparse block coefficients."
+    "parity_reached": false
+  },
+  "v41_status": {
+    "conclusion": "Browser CompressionStream and repeated secondary AV1 sessions proved operationally unreliable on Safari/iPhone for long research batteries. These paths are no longer executed by v5.0."
   },
   "private_video": {
-    "module": "mikavideo-v40",
+    "module": "mikavideo-v50",
     "module_revision": 1,
-    "module_sha256": "53e8e0c52258365c40b7d346aa0eb89fd9a7d9bec7b0acd5797acdba8233b137",
-    "experiment": "Enhancement SuperBattery v4.0: AV1-coded temporal residual enhancement streams plus quantized gzip residual controls; held-out screening/final split; base, sharpened and saved-neural providers; exact stream-byte accounting; automatic 175 and 150 kbps extensions.",
+    "module_sha256": "33cf0209df69a691e17cc7855ba64386740e7479eeb3b93f2f9e41f7a6cd675f",
+    "experiment": "Latent Lift MegaLab v5.0: exact low-resolution residual latent streams using custom zero-run/varint or sparse-index serialization, absolute and temporal-delta coding, broad quantization/resolution search, then neural latent-lift decoder screening and locked 90-frame finals with int8 model accounting and automatic 175/150 kbps extensions.",
     "frames": 300,
     "fps": 30,
     "train_gap_validation": [170, 40, 90],
-    "screen_segment": {"start_frame": 30, "frames": 120},
+    "tuning_window": {"start_frame": 120, "frames": 50},
+    "deterministic_screen": {"start_frame": 100, "frames": 60, "total_points": 420},
+    "residual_scales": [0.125, 0.1666666667, 0.25, 0.3333333333, 0.5],
+    "quant_steps": [2, 4, 6, 8, 12, 16, 24],
+    "temporal_modes": ["absolute", "delta"],
+    "pack_modes": ["zero-run-varint", "sparse-index-varint"],
+    "neural_quick_points": 32,
+    "neural_architectures": ["L12x2", "L24x2", "L24x4", "L32x3"],
+    "neural_target_modes": ["full-residual", "correction-over-latent"],
+    "neural_finalists": 4,
+    "lower_rate_extensions": ["90%-175k", "85%-175k", "90%-150k", "85%-150k"],
     "final_validation_frames": 90,
-    "reference_validation_frames": 90,
-    "validation_locked": true,
-    "av1_residual": {
-      "modes": ["raw", "high-frequency"],
-      "scales": [0.25, 0.5, 1.0],
-      "gains": [1, 2, 4, 8],
-      "target_sidecar_bps": [5000, 10000, 20000, 30000, 40000, 60000],
-      "screen_configs": 144,
-      "diversified_finalists": 20,
-      "providers": ["base90raw", "base90sharp", "base85sharp", "neural90"]
-    },
-    "gzip_residual": {
-      "scales": [0.25, 0.5, 1.0],
-      "quant_steps": [4, 8, 16],
-      "temporal_modes": ["absolute", "delta"],
-      "configs_per_provider": 18
-    },
-    "lower_rate_extensions": [175000, 150000],
+    "weights_quantized": "symmetric int8 before final evaluation",
     "exact_sidecar_serialization": true,
+    "resume_safe": true,
     "raw_video_upload": false
   },
   "historical_code": "Archived but not executed by the R31 shell"
