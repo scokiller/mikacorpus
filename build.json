@@ -2,10 +2,10 @@
   "engine": "mika-video-neural-lab",
   "protocol": "MC-VIDEO-PRIVATE-1",
   "tfjs": "4.22.0",
-  "generated_utc": "2026-08-11T00:24:00Z",
+  "generated_utc": "2026-08-11T00:31:00Z",
   "hosting": "GitHub Pages minimal shell + Supabase Pro private authenticated neural module",
   "revision": "r31-single-neural-shell-v08",
-  "runtime_revision": "r31-private-mikavideo-neural-restore-v08-r3",
+  "runtime_revision": "r31-private-mikavideo-neural-restore-v08-r4",
   "public_boot": {
     "shell": "video-shell.js",
     "shell_git_blob": "67782930d904814b472c8c053f328a5e8058dd88",
@@ -15,8 +15,8 @@
   },
   "private_video": {
     "module": "mikavideo-v08",
-    "module_revision": 3,
-    "module_sha256": "0ea76826d38d202f2c12934657b567ef1159e9a23bb19d44174a2528a8bb4701",
+    "module_revision": 4,
+    "module_sha256": "e6a3da5f42ab9bf64810ae22ccf767c8c643bc147afdbf1009839babc0870899",
     "experiment": "Neural Restore Lab: real AV1 multi-rate bases, WebGPU neural restoration, strict temporal train-gap-validation split, int8 weight quantization before final evaluation, model sidecar charged",
     "test_geometry": "320x568",
     "frames": 300,
@@ -26,6 +26,7 @@
     "architectures": ["Spatial-16", "Causal-3x16", "Causal-3 receptive-5", "Causal-5 deep R5"],
     "gradient_safe": true,
     "architecture_fault_isolation": true,
+    "safe_weight_ownership": true,
     "raw_video_upload": false
   },
   "historical_code": "Archived in repository but not loaded or cached by R31"
