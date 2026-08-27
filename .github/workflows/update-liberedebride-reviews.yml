@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - .github/workflows/update-liberedebride-reviews.yml
+      - liberatedebride/update_reviews.py
 
 permissions:
   contents: write
@@ -24,6 +25,21 @@ jobs:
     steps:
       - name: Récupérer les 36 avis validés
         uses: actions/checkout@v4
+
+      - name: Vérifier les protections avant toute collecte
+        shell: bash
+        run: |
+          python3 -m py_compile liberatedebride/update_reviews.py
+          python3 - <<'PY'
+          import json
+          data=json.load(open('liberedebride/reviews.json',encoding='utf-8'))
+          reviews=data['reviews']
+          assert len(reviews) >= 36
+          assert len({review['id'] for review in reviews}) == len(reviews)
+          assert sum(review.get('profile') == 'legacy' for review in reviews) == 19
+          assert data.get('legacyAutoUpdate') is False
+          print(f"Base protégée : {len(reviews)} avis uniques, dont 19 historiques figés.")
+          PY
 
       - name: Préparer les vues récentes de la fiche actuelle uniquement
         shell: bash
@@ -66,16 +82,16 @@ jobs:
             -lang fr \
             -exit-on-inactivity 2m
 
-      - name: Fusionner avec les protections anti-suppression et anti-fausses-dates
+      - name: Fusionner sans suppression, doublon ni fausse date
         if: always()
         run: python3 liberatedebride/update_reviews.py
 
       - name: Publier uniquement un ajout ou un enrichissement fiable
-        if: always()
+        if: success()
         shell: bash
         run: |
           if git diff --quiet -- liberatedebride/reviews.json; then
-            echo "Aucun changement fiable; les 36 avis validés restent intacts."
+            echo "Aucun changement fiable; la base validée reste intacte."
             exit 0
           fi
           git config user.name "github-actions[bot]"
